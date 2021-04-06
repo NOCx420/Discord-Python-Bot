@@ -7,4 +7,9 @@ The Packages you'll need to run this bot are:
   -os  
   -numpy  
   -dotenv  
-  -asyncio  
+  -asyncio    
+    
+# How to start  
+1. Download all packages
+2. Replace "YOUR_TOKEN_HERE" in 'acc.env' with your own bot token
+3. Look into 'config.py' and change up the values if you want
