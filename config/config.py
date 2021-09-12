@@ -1,30 +1,25 @@
-status = ["with Mao ZeDong",
-          "use -help",
-          "with your Mom",
+status = ["use -help",
+          "with legos",
           "Deus Ex: Human Revolution",
-          "use -help",
           "with Roadkill",
           "Cyberbonk2088",
-          "use -help",
-          "Minecraft on Pornhub",
-          "some Nutaku game",
+          "Minecraft on Roblox",
           "use -help",
           "Just Cause 3 ;)",
-          "Battlefield2042",
           "use -help",
           "russian roulette"]
 
 #the message displayed when bother is triggered
-no = "<@605784984409866241> sum dud wants something from u, idk :/"
+no = "<@YOUR_DISCORD_ID> sum dud wants something from u, idk :/"
 
-#The moderation channel to send reports to
-mod_channel = 883023161015279683
+#The moderation channel to send reports to, its an integer and not a string!
+mod_channel = CHANNEL_ID_HERE
 
 #the link for server invite
-invitelnk = "https://discord.com/invite/BKwkFdGT6H"
+invitelnk = "https://discord.com/invite/YOUR_INVITE"
 
 #enter the nick names that triggers the no message above
-bother = ["patrik",
-          "Patrik",
-          "patrick",
-          "Patrick"]
+bother = ["example",
+          "example",
+          "example",
+          "example"]
