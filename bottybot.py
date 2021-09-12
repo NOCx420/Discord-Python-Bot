@@ -5,7 +5,8 @@ from discord.ext import commands
 from discord import Intents
 from dotenv import load_dotenv
 import asyncio
-import config
+from config import config
+from dotenv import load_dotenv
 
 #loads discord token from 'acc.env'
 load_dotenv('acc.env')
