@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 import asyncio
 from config import config
 from dotenv import load_dotenv
+from functools import partial
 
 #loads discord token from 'acc.env'
 load_dotenv('acc.env')
@@ -70,9 +71,12 @@ async def help(ctx):
                                       "uest your Discord ID (Good for dev)\n- howgay: "
                                       "to measure your gayness\n- id: request ID of another person"
                                       "\n- profile: shows information about mentioned user\n"
-                                      "- echo: check if command execution is working(I use this a lot\n"
-                                      "- invite: links the invite to the server)\n"
-                                      "- report: usage: -report @MEMBER REASON", color=discord.Color.purple())
+                                      "- echo: check if command execution is working(I use this a lot)\n"
+                                      "- invite: links the invite to the server\n"
+                                      "- report: usage: -report @MEMBER REASON\n"
+                                      "- chonk for chonk\n"
+                                      "- ban to ban mentioned user\n"
+                                      "- kick to kick mentioned user", color=discord.Color.purple())
 
     embed.set_author(name=bot.user,
                      icon_url=bot.user.avatar_url)
@@ -158,8 +162,10 @@ async def hentai(ctx):
 @bot.command(name='howgay')
 async def howgay(ctx):
     x = random.randint(100)
+    if ctx.author.id == config.ungayid:
+        x = 0
     embed = discord.Embed(title="Sheeeeeeesh",
-                          description="<@" + str(ctx.author.id) + ">" " you are " + str(x) + "% gay.",
+                          description="<@" + str(ctx.author.id) + "> is " + str(x) + "% gay.",
                           color=discord.Color.purple())
     await ctx.channel.send(embed=embed)
 
@@ -200,5 +206,27 @@ async def report(ctx, member : discord.Member, *, args):
                           description="<@" + str(ctx.author.id) + ">" + " reported <@" + str(repid) + "> for " + "".join(args[:]) + ".",
                           color=discord.Color.purple())
     await channel.send(embed=embed)
+
+@bot.command(name='chonk')
+async def chonk(ctx):
+    embed = discord.Embed(title="Chonkers.",  color=discord.Color.purple())
+    embed.set_image(url=config.chonklnk)
+    await ctx.channel.send(embed=embed)
+
+#'ban' users (trust breaker lol)
+@bot.command(name='ban')
+async def ban(ctx, user: discord.Member):
+    embed = discord.Embed(title="User banned",
+                          description=f'{user} user has been banned by ' + "<@" + str(ctx.author.id) + ">",
+                          color=discord.Color.purple())
+    await ctx.channel.send(embed=embed)
+
+#same as kick, gonna make these commands work soon with roles, but for now they're just to scare ppl
+@bot.command(name='kick')
+async def kick(ctx, user: discord.Member):
+    embed = discord.Embed(title="User kicked",
+                          description=f'{user} user has been kicked by ' + "<@" + str(ctx.author.id) + ">",
+                          color=discord.Color.purple())
+    await ctx.channel.send(embed=embed)
 
 bot.run(DISCORD_TOKEN)
