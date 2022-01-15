@@ -1,22 +1,18 @@
 import discord
 import os
 from numpy import random
-from discord.ext import commands
-from discord import Intents
-from dotenv import load_dotenv
 import asyncio
+from discord.ext import commands
 from config import config
 from dotenv import load_dotenv
-from functools import partial
 
 #loads discord token from 'acc.env'
 load_dotenv('acc.env')
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 
 intents = discord.Intents.default()
-intents.members = True
 
-bot = commands.Bot(command_prefix = "-", intents=intents)
+bot = commands.Bot(command_prefix="-", intents=intents)
 bot.remove_command('help')
 
 #changes status. The values are in config.py
@@ -36,7 +32,7 @@ async def on_ready():
 #it pings me that someone wants to annoy me. Values in config.py
 @bot.listen('on_message')
 async def no(message):
-    if  message.content in config.bother:
+    if message.content in config.bother:
         await message.channel.send(config.no)
 
     if message.author == bot.user:
@@ -100,7 +96,7 @@ async def myid(ctx):
 
 #shows ID of mentioned user
 @bot.command(name='id')
-async def id(ctx, member : discord.Member):
+async def id(ctx, member: discord.Member):
     person = member
     personname = f"{member}"
     personid = member.id
@@ -131,7 +127,7 @@ async def profile(ctx, *, member : discord.Member):
                      icon_url=person.avatar_url)
 
     embed.set_thumbnail(url=person.avatar_url)
-    embed.add_field(name="**User ID**", value=personid,
+    embed.add_field(name="**User ID**", value=str(personid),
                     inline=False)
 
     embed.add_field(name="**Joined Discord**",
@@ -213,20 +209,24 @@ async def chonk(ctx):
     embed.set_image(url=config.chonklnk)
     await ctx.channel.send(embed=embed)
 
-#'ban' users (trust breaker lol)
+#Bans if you have the ban perm
 @bot.command(name='ban')
-async def ban(ctx, user: discord.Member):
+@commands.has_permissions(ban_members=True)
+async def ban(ctx, member : discord.Member, *, reason=None):
     embed = discord.Embed(title="User banned",
-                          description=f'{user} user has been banned by ' + "<@" + str(ctx.author.id) + ">",
+                          description=f'{member} has been banned by ' + "<@" + str(ctx.author.id) + ">",
                           color=discord.Color.purple())
     await ctx.channel.send(embed=embed)
+    await member.ban(reason=reason)
 
-#same as kick, gonna make these commands work soon with roles, but for now they're just to scare ppl
+#Kicks if you have the kick perm
 @bot.command(name='kick')
-async def kick(ctx, user: discord.Member):
+@commands.has_permissions(kick_members=True)
+async def kick(ctx, member : discord.Member, *, reason=None):
     embed = discord.Embed(title="User kicked",
-                          description=f'{user} user has been kicked by ' + "<@" + str(ctx.author.id) + ">",
-                          color=discord.Color.purple())
+                            description=f'{member} has been kicked by ' + "<@" + str(ctx.author.id) + ">",
+                            color=discord.Color.purple())
     await ctx.channel.send(embed=embed)
+    await member.kick(reason=reason)
 
 bot.run(DISCORD_TOKEN)
