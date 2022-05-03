@@ -1,36 +1,23 @@
-status = ["with Mao ZeDong",
-          "use -help",
-          "with your Mom",
-          "Deus Ex: Human Revolution",
-          "use -help",
-          "with Roadkill",
-          "Cyberbonk2088",
-          "use -help",
-          "Minecraft on Pornhub",
-          "some Nutaku game",
-          "use -help",
-          "Just Cause 3 ;)",
-          "Battlefield2042",
-          "use -help",
-          "russian roulette"]
-
-#the message displayed when bother is triggered
-no = "<@605784984409866241> sum dud wants something from u, idk :/"
+status = ["something1",
+	  "something2"]
+          
+#the message displayed when bother is triggered, set it to whatever, I make it ping me with this message
+no = "<@id> sum dud wants something from u, idk :/"
 
 #The moderation channel to send reports to
-mod_channel = 883023161015279683
+mod_channel = 111111111111111111
 
 #the link for server invite
-invitelnk = "https://discord.com/invite/BKwkFdGT6H"
+invitelnk = "https://discord.com/invite/amongus"
 
 #enter the nick names that triggers the no message above
-bother = ["patrik",
-          "Patrik",
-          "patrick",
-          "Patrick"]
+bother = ["nikname",
+          "Nikname",
+          "nickname",
+          "Nickname"]
 
 #makes howgay command always return 0% for this id
-ungayid = 605784984409866241
+ungayid = 1111111111111111
 
 #link to the image the chonk should display
-chonklnk = "https://cdn.discordapp.com/attachments/885901272937553950/887334771049525359/chonk.png"
+chonklnk = "https://files.nocx420.xyz/HKgsaeJi.png"
