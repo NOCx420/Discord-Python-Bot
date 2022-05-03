@@ -11,6 +11,7 @@ load_dotenv('acc.env')
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 
 intents = discord.Intents.default()
+intents.members = True
 
 bot = commands.Bot(command_prefix="-", intents=intents)
 bot.remove_command('help')
@@ -62,37 +63,25 @@ async def on_command_error(ctx, error):
 async def help(ctx):
     embed = discord.Embed(title="__**Commands**__",
                           description="Use - to execute the commands listed below:\n"
-                                      "\n- help: shows this message\n- hentai: for me"
-                                      " to DM a random comic to you ;)\n- myid: to req"
-                                      "uest your Discord ID (Good for dev)\n- howgay: "
-                                      "to measure your gayness\n- id: request ID of another person"
-                                      "\n- profile: shows information about mentioned user\n"
-                                      "- echo: check if command execution is working(I use this a lot)\n"
-                                      "- invite: links the invite to the server\n"
-                                      "- report: usage: -report @MEMBER REASON\n"
-                                      "- chonk for chonk\n"
-                                      "- ban to ban mentioned user\n"
-                                      "- kick to kick mentioned user", color=discord.Color.purple())
+                                      "\n- help: shows this message\n"
+                                      "- hentai: for me to DM a random comic to you ;)\n"
+                                      "- howgay: to measure your gayness\n"
+                                      "- id: request ID of another person\n"
+                                      "- profile: Shows information about mentioned user\n"
+                                      "- echo: Checks if command execution is working\n"
+                                      "- invite: Links the invite to the server\n"
+                                      "- report: Used to report members\n"
+                                      "- chonk: Used for chonk\n"
+                                      "- ban: Bans mentioned user\n"
+                                      "- unban: Unbans give user, name#1234 format\n"
+                                      "- kick: Kicks mentioned user\n"
+                                      "- clear: Clears up to 10 messages", color=discord.Color.purple())
 
     embed.set_author(name=bot.user,
                      icon_url=bot.user.avatar_url)
     embed.set_thumbnail(url=bot.user.avatar_url)
 
     await ctx.channel.send(embed=embed)
-
-#shows your ID
-@bot.command(name='myid')
-async def myid(ctx):
-        authid = ctx.author.id
-        embed = discord.Embed(title="__**ID**__",
-                              description="Your Discord ID is: " + str(authid),
-                              color=discord.Color.purple())
-
-        embed.set_author(name=ctx.author,
-                         icon_url=ctx.author.avatar_url)
-
-        embed.set_thumbnail(url=ctx.author.avatar_url)
-        await ctx.channel.send(embed=embed)
 
 #shows ID of mentioned user
 @bot.command(name='id')
@@ -168,15 +157,14 @@ async def howgay(ctx):
 #this command is just there to see if somethings blocking command execution, idk it helped me
 @bot.command(name='echo')
 async def echo(ctx):
-    embed = discord.Embed(title="Code 200 Boi",
-                          description="Command execution seems to be working as far as this one goes,"
-                                      " if the other ones don't work than that's gonna be a pain in the ass to fix",
+    embed = discord.Embed(title="Code 200",
+                          description="Command execution works!",
                           color=discord.Color.purple())
 
     embed.set_author(name=bot.user,
                      icon_url=bot.user.avatar_url)
 
-    await ctx.channel.send(embed=embed)
+    await ctx.channel.send(embed=embed, delete_after=5)
 
 #a command to request the invite link to your server, put link in config file
 @bot.command(name='invite')
@@ -189,20 +177,23 @@ async def invite(ctx):
                      icon_url=bot.user.avatar_url)
     await ctx.channel.send(embed=embed)
 
+#can send reports with reasons to a specified channel for mods
 @bot.command(name='report')
-async def report(ctx, member : discord.Member, *, args):
+async def report(ctx, member : discord.Member, *, args = None):
     repid = member.id
     if args == None:
         embed = discord.Embed(title="Reason required",
-                              description="Please provide a reason for your report.",
+                              description="Please provide a reason for your report. Like @Member + reason",
                               color=discord.Color.purple())
-        ctx.channel.send(embed)
-    channel = await bot.fetch_channel(config.mod_channel)
-    embed = discord.Embed(title="Report Submitted",
-                          description="<@" + str(ctx.author.id) + ">" + " reported <@" + str(repid) + "> for " + "".join(args[:]) + ".",
-                          color=discord.Color.purple())
-    await channel.send(embed=embed)
+        await ctx.channel.send(embed=embed, delete_after=5)
+    else:
+        channel = await bot.fetch_channel(config.mod_channel)
+        embed = discord.Embed(title="Report Submitted",
+                              description="<@" + str(ctx.author.id) + ">" + " reported <@" + str(repid) + "> for " + "".join(args[:]) + ".",
+                              color=discord.Color.purple())
+        await channel.send(embed=embed)
 
+#he is thicc
 @bot.command(name='chonk')
 async def chonk(ctx):
     embed = discord.Embed(title="Chonkers.",  color=discord.Color.purple())
@@ -216,8 +207,25 @@ async def ban(ctx, member : discord.Member, *, reason=None):
     embed = discord.Embed(title="User banned",
                           description=f'{member} has been banned by ' + "<@" + str(ctx.author.id) + ">",
                           color=discord.Color.purple())
-    await ctx.channel.send(embed=embed)
+    await ctx.channel.send(embed=embed, delete_after=5)
     await member.ban(reason=reason)
+
+#unbans if you have the ban perm
+@bot.command(name='unban')
+@commands.has_permissions(ban_members=True)
+async def unban(ctx, *, member):
+    banned_users = await ctx.guild.bans()
+
+    member_name, member_discriminator = member.split('#')
+    for ban_entry in banned_users:
+        user = ban_entry.user
+
+        if (user.name, user.discriminator) == (member_name, member_discriminator):
+            embed = discord.Embed(title="User unbanned",
+                                  description=f"{user.mention} has been unbanned",
+                                  color=discord.Color.purple())
+            await ctx.channel.send(embed=embed, delete_after=5)
+            await ctx.guild.unban(user)
 
 #Kicks if you have the kick perm
 @bot.command(name='kick')
@@ -226,7 +234,27 @@ async def kick(ctx, member : discord.Member, *, reason=None):
     embed = discord.Embed(title="User kicked",
                             description=f'{member} has been kicked by ' + "<@" + str(ctx.author.id) + ">",
                             color=discord.Color.purple())
-    await ctx.channel.send(embed=embed)
+    await ctx.channel.send(embed=embed, delete_after=5)
     await member.kick(reason=reason)
 
+#clears messages up to 10 messages per command, if you go higher things will start to break, bc discord is stoopid
+@bot.command(name='clear')
+@commands.has_permissions(manage_messages=True)
+async def clear(ctx, amount):
+    mlimit = 10
+    amount = int(amount)
+    if (amount > mlimit):
+        embed = discord.Embed(title="Exceeded deletion limit",
+                              description="The limit of messages to be deleted is 10",
+                              color=discord.Color.purple())
+        await ctx.channel.send(embed=embed, delete_after=5)
+
+    else:
+        await ctx.channel.purge(limit=amount)
+        embed = discord.Embed(title="Messages cleared!",
+                              description="Deleted the last " + str(amount) + " messages",
+                              color=discord.Color.purple())
+        await ctx.channel.send(embed=embed, delete_after=5)
+
+#runs bot
 bot.run(DISCORD_TOKEN)
